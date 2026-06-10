@@ -1,0 +1,23 @@
+server:
+  port: 8081
+
+spring:
+  application:
+    name: fx-stream-service
+
+  data:
+    redis:
+      host: localhost
+      port: 16379
+      password: your_password123!
+      database: 0
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+
+logging:
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%20.20thread] [%X{traceId}] [%-5level] %logger{36} - %msg%n"
