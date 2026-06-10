@@ -1,7 +1,6 @@
-package com.xooxz.stream.controller
+package com.xooxz.stream.presentation
 
-import com.xooxz.stream.dto.RateResponse
-import com.xooxz.stream.service.RateMockService
+import com.xooxz.stream.application.RateStreamService
 import org.springframework.http.MediaType
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -11,7 +10,7 @@ import reactor.core.publisher.Mono
 
 @RestController
 class RateStreamController(
-    private val rateMockService: RateMockService
+    private val rateStreamService: RateStreamService
 ) {
 
     /**
@@ -20,7 +19,7 @@ class RateStreamController(
      */
     @GetMapping("/{symbol}")
     fun getRate(@PathVariable symbol: String): Mono<RateResponse> {
-        val result = rateMockService.getRate(symbol)
+        val result = rateStreamService.getRate(symbol)
         return result
     }
 
@@ -33,7 +32,7 @@ class RateStreamController(
         produces = [MediaType.TEXT_EVENT_STREAM_VALUE]
     )
     fun streamRates(@PathVariable symbol: String): Flux<RateResponse> {
-        return rateMockService.streamRates(symbol)
+        return rateStreamService.streamRates(symbol)
     }
 
 }

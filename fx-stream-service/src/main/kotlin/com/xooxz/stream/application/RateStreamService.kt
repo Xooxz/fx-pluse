@@ -1,24 +1,26 @@
-package com.xooxz.stream.service
+package com.xooxz.stream.application
 
-import com.xooxz.stream.dto.RateResponse
+import com.xooxz.stream.domain.RateGenerator
+import com.xooxz.stream.infrastructure.RateEventProducer
+import com.xooxz.stream.presentation.RateResponse
 import org.slf4j.LoggerFactory
 import org.springframework.data.redis.core.ReactiveStringRedisTemplate
 import org.springframework.stereotype.Service
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 import java.math.BigDecimal
-import java.math.RoundingMode
 import java.time.Duration
 import java.time.LocalDateTime
-import java.util.concurrent.ThreadLocalRandom
 
 @Service
-class RateMockService(
-    private val redisTemplate: ReactiveStringRedisTemplate
+class RateStreamService(
+    private val rateGenerator: RateGenerator,
+    private val redisTemplate: ReactiveStringRedisTemplate,
+    private val rateEventProducer: RateEventProducer
 ) {
 
     companion object {
-        private val log = LoggerFactory.getLogger(RateMockService::class.java)
+        private val log = LoggerFactory.getLogger(RateStreamService::class.java)
     }
 
     /**
@@ -44,10 +46,12 @@ class RateMockService(
     fun streamRates(symbol: String): Flux<RateResponse> {
         return Flux.interval(Duration.ofSeconds(1))
             .map {
-                createDummyRate(symbol)
+                rateGenerator.createDummyRate(symbol)
             }
             .flatMap { rate ->
-                saveLatestRate(rate).thenReturn(rate)
+                saveLatestRate(rate)
+                    .then(rateEventProducer.send(rate))
+                    .thenReturn(rate)
             }
     }
 
@@ -60,22 +64,6 @@ class RateMockService(
         val key = "rate:${rate.symbol}"
 
         return redisTemplate.opsForValue().set(key, rate.price.toString(), Duration.ofMinutes(10))
-    }
-
-    /**
-     * 테스트용 환율 더미데이터 생성
-     * @param symbol 통화쌍 코드
-     * @return 생성된 환율 정보
-     */
-    private fun createDummyRate(symbol: String): RateResponse {
-        val randomPrice = ThreadLocalRandom.current()
-            .nextDouble(1370.0, 1400.0)
-
-        return RateResponse(
-            symbol,
-            BigDecimal.valueOf(randomPrice).setScale(2, RoundingMode.HALF_UP),
-            LocalDateTime.now()
-        )
     }
 
 }

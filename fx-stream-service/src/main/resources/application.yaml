@@ -9,8 +9,13 @@ spring:
     redis:
       host: localhost
       port: 16379
-      password: your_password123!
+      password: fx_steam12!@
       database: 0
+
+  kafka:
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
 
 management:
   endpoints:

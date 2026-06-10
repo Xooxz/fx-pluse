@@ -1,4 +1,4 @@
-package com.xooxz.stream.dto
+package com.xooxz.stream.presentation
 
 import java.math.BigDecimal
 import java.time.LocalDateTime
