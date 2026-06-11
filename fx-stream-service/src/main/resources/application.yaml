@@ -4,6 +4,11 @@ server:
 spring:
   application:
     name: fx-stream-service
+  profiles:
+    active: local
+
+  reactor:
+    context-propagation: auto
 
   data:
     redis:
@@ -23,6 +28,10 @@ management:
       exposure:
         include: health,info
 
-logging:
-  pattern:
-    console: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%20.20thread] [%X{traceId}] [%-5level] %logger{36} - %msg%n"
+  tracing:
+    sampling:
+      probability: 1.0
+
+  zipkin:
+    tracing:
+      endpoint: http://localhost:9411/api/v2/spans

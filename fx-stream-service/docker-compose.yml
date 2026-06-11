@@ -14,3 +14,9 @@ services:
     container_name: fx-kafka
     ports:
       - "9092:9092"
+
+  zipkin:
+    image: openzipkin/zipkin
+    container_name: fx-zipkin
+    ports:
+      - "9411:9411"

@@ -33,8 +33,15 @@ class RateStreamService(
 
         return redisTemplate.opsForValue()
             .get(key)
+            .switchIfEmpty(
+                Mono.error(
+                    IllegalArgumentException(
+                        "Rate not found : $symbol"
+                    )
+                )
+            )
             .map { price ->
-                log.info("테스트")
+                log.debug("getRate - symbol: $symbol, price: $price")
                 RateResponse(symbol, BigDecimal(price), LocalDateTime.now())
             }
     }
@@ -63,6 +70,7 @@ class RateStreamService(
     private fun saveLatestRate(rate: RateResponse): Mono<Boolean> {
         val key = "rate:${rate.symbol}"
 
+        log.debug("saveLatestRate - symbol: {}, price: {}", rate.symbol, rate.price)
         return redisTemplate.opsForValue().set(key, rate.price.toString(), Duration.ofMinutes(10))
     }
 
