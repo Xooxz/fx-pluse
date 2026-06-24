@@ -1,6 +1,7 @@
-package com.xooxz.stream.presentation
+package com.xooxz.stream.presentation.controller
 
 import com.xooxz.stream.application.RateStreamService
+import com.xooxz.stream.presentation.dto.RateResponse
 import org.springframework.http.MediaType
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable

@@ -1,6 +1,6 @@
-package com.xooxz.stream.domain
+package com.xooxz.stream.domain.service
 
-import com.xooxz.stream.presentation.RateResponse
+import com.xooxz.stream.presentation.dto.RateResponse
 import org.springframework.stereotype.Component
 import java.math.BigDecimal
 import java.math.RoundingMode
