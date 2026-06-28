@@ -2,6 +2,7 @@ package com.xooxz.stream.presentation.controller
 
 import com.xooxz.stream.application.RateStreamService
 import com.xooxz.stream.presentation.dto.RateResponse
+import org.slf4j.LoggerFactory
 import org.springframework.http.MediaType
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -14,14 +15,18 @@ class RateStreamController(
     private val rateStreamService: RateStreamService
 ) {
 
+    companion object {
+        private val log = LoggerFactory.getLogger(RateStreamController::class.java)
+    }
+
     /**
      * 단건 환율 조회
      * @param symbol 통화 코드
      */
     @GetMapping("/{symbol}")
     fun getRate(@PathVariable symbol: String): Mono<RateResponse> {
-        val result = rateStreamService.getRate(symbol)
-        return result
+        log.info("단건 환율 조회")
+        return rateStreamService.getRate(symbol)
     }
 
     /**
@@ -33,6 +38,7 @@ class RateStreamController(
         produces = [MediaType.TEXT_EVENT_STREAM_VALUE]
     )
     fun streamRates(@PathVariable symbol: String): Flux<RateResponse> {
+        log.info("개별 환율 스트리밍 조회")
         return rateStreamService.getStreamRates(symbol)
     }
 
@@ -44,6 +50,7 @@ class RateStreamController(
         produces = [MediaType.TEXT_EVENT_STREAM_VALUE]
     )
     fun streamRates(): Flux<List<RateResponse>> {
+        log.info("전체 환율 스트리밍 조회")
         return rateStreamService.streamRates()
     }
 

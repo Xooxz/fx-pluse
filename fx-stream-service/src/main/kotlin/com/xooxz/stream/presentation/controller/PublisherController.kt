@@ -2,6 +2,7 @@ package com.xooxz.stream.presentation.controller
 
 import com.xooxz.stream.application.RatePublisher
 import com.xooxz.stream.presentation.dto.BaseResponse
+import org.slf4j.LoggerFactory
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestMapping
@@ -16,12 +17,17 @@ class PublisherController(
     private val ratePublisher: RatePublisher
 ) {
 
+    companion object {
+        private val log = LoggerFactory.getLogger(PublisherController::class.java)
+    }
+
     /**
      * 환율 Publisher를 시작
      * @return Publisher 실행 여부
      */
     @PostMapping("/start")
     fun start(): BaseResponse<Boolean> {
+        log.info("환율 Publisher 시작")
         ratePublisher.start()
 
         return BaseResponse.succeed(
@@ -36,6 +42,7 @@ class PublisherController(
      */
     @PostMapping("/stop")
     fun stop(): BaseResponse<Boolean> {
+        log.info("환율 Publisher 중지")
         ratePublisher.stop()
 
         return BaseResponse.succeed(
@@ -50,6 +57,8 @@ class PublisherController(
      */
     @GetMapping("/status")
     fun status(): BaseResponse<Boolean> {
+        log.info("환율 Publisher 상태 조회")
+
         return BaseResponse.succeed(
             message = "RatePublisher status",
             data = ratePublisher.isRunning()

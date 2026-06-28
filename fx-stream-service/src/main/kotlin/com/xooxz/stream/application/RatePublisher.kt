@@ -60,9 +60,6 @@ class RatePublisher(
                     .then(rateEventProducer.send(rate))
                     .thenReturn(rate)
             }
-            .doOnNext { rate ->
-                log.debug("published rate: {}", rate)
-            }
             .doOnError { ex ->
                 log.error("RatePublisher error", ex)
             }

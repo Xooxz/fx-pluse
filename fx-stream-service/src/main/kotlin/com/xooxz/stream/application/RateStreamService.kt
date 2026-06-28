@@ -42,8 +42,6 @@ class RateStreamService(
                 objectMapper.readValue(json, CachedRate::class.java)
             }
             .flatMap { cachedRate ->
-                log.debug("getRate: {}", cachedRate)
-
                 if (cachedRate.updatedAt.isBefore(LocalDateTime.now().minus(STALE_THRESHOLD))) {
                     return@flatMap Mono.error(
                         RateNotFoundException(symbol)
