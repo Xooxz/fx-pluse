@@ -5,8 +5,6 @@ import com.xooxz.stream.infrastructure.redis.CachedRate
 import com.xooxz.stream.domain.exception.RateNotFoundException
 import com.xooxz.stream.domain.exception.UnsupportedCurrencyException
 import com.xooxz.stream.domain.model.CurrencyPair
-import com.xooxz.stream.domain.service.RateGenerator
-import com.xooxz.stream.infrastructure.kafka.RateEventProducer
 import com.xooxz.stream.presentation.dto.RateResponse
 import org.slf4j.LoggerFactory
 import org.springframework.data.redis.core.ReactiveStringRedisTemplate
@@ -18,9 +16,7 @@ import java.time.LocalDateTime
 
 @Service
 class RateStreamService(
-    private val rateGenerator: RateGenerator,
     private val redisTemplate: ReactiveStringRedisTemplate,
-    private val rateEventProducer: RateEventProducer,
     private val objectMapper: ObjectMapper
 ) {
 
@@ -30,24 +26,18 @@ class RateStreamService(
     }
 
     /**
-     * 통화쌍에 대한 최신 환율 조회
-     * @param symbol 통화쌍 코드
+     * Redis에 저장된 최신 환율 정보를 조회
+     * @param symbol 통화 코드
      * @return 최신 환율 정보
      */
     fun getRate(symbol: String): Mono<RateResponse> {
         if (!CurrencyPair.isValid(symbol)) {
-            return Mono.error(
-                UnsupportedCurrencyException(symbol)
-            )
+            return Mono.error(UnsupportedCurrencyException(symbol))
         }
 
         return redisTemplate.opsForValue()
             .get("rate:$symbol")
-            .switchIfEmpty(
-                Mono.error(
-                    RateNotFoundException(symbol)
-                )
-            )
+            .switchIfEmpty(Mono.error(RateNotFoundException(symbol)))
             .map { json ->
                 objectMapper.readValue(json, CachedRate::class.java)
             }
@@ -64,46 +54,42 @@ class RateStreamService(
                     RateResponse(
                         symbol = cachedRate.symbol,
                         price = cachedRate.price,
-                        createdAt = cachedRate.updatedAt
+                        previousPrice = cachedRate.previousPrice,
+                        change = cachedRate.change,
+                        changeRate = cachedRate.changeRate,
+                        updatedAt = cachedRate.updatedAt
                     )
                 )
             }
     }
 
     /**
-     * 실시간 환율 스트림 생성
+     * 단일 통화의 최신 환율을 SSE(Server-Sent Events)로 스트리밍
+     * @param symbol 통화 코드
      * @return 실시간 환율 스트림
      */
-    fun streamRates(symbol: String): Flux<RateResponse> {
-        return Flux.interval(Duration.ofSeconds(1))
-            .map {
-                rateGenerator.createDummyRate(symbol)
-            }
-            .flatMap { rate ->
-                saveLatestRate(rate)
-                    .then(rateEventProducer.send(rate))
-                    .thenReturn(rate)
+    fun getStreamRates(symbol: String): Flux<RateResponse> {
+        return Flux.interval(Duration.ZERO, Duration.ofSeconds(1))
+            .flatMap {
+                getRate(symbol)
             }
     }
 
     /**
-     * 최신 환율 Redis 저장
-     * @param rate 저장할 환율 정보
-     * @return 저장 성공 여부
+     * 지원하는 전체 통화의 최신 환율을 SSE로 스트리밍
      */
-    private fun saveLatestRate(rate: RateResponse): Mono<Boolean> {
-        val cachedRate = CachedRate(
-            symbol = rate.symbol,
-            price = rate.price,
-            updatedAt = LocalDateTime.now()
-        )
-
-        log.debug("saveLatestRate: {}", cachedRate)
-        return redisTemplate.opsForValue()
-            .set(
-                "rate:${rate.symbol}",
-                objectMapper.writeValueAsString(cachedRate)
-            )
+    fun streamRates(): Flux<List<RateResponse>> {
+        return Flux.interval(Duration.ZERO, Duration.ofSeconds(1))
+            .flatMap {
+                Flux.fromIterable(CurrencyPair.entries)
+                    .flatMap { currency ->
+                        getRate(currency.symbol)
+                            .onErrorResume {
+                                Mono.empty()
+                            }
+                    }
+                    .collectList()
+            }
     }
 
 }

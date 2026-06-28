@@ -19,7 +19,7 @@ class RateEventProducer(
         val event = RateUpdatedEvent(
             symbol = rate.symbol,
             price = rate.price,
-            createdAt = rate.createdAt
+            createdAt = rate.updatedAt
         )
 
         return Mono.fromFuture(

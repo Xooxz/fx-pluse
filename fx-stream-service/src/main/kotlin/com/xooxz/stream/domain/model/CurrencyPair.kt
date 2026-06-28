@@ -2,7 +2,7 @@ package com.xooxz.stream.domain.model
 
 /**
  * 지원하는 통화 목록
- * @param symbol 통화쌍 코드
+ * @param symbol 통화 코드
  */
 enum class CurrencyPair(
     val symbol: String
@@ -31,20 +31,13 @@ enum class CurrencyPair(
     companion object {
         /**
          * 지원하는 통화인지 검증
-         * @param symbol 통화쌍 코드
+         * @param symbol 통화 코드
          * @return 지원 여부
          */
         fun isValid(symbol: String): Boolean =
             entries.any {
                 it.symbol.equals(symbol, ignoreCase = true)
             }
-
-        /**
-         * 지원 통화 목록 반환
-         * @param symbol 통화쌍 코드 목록
-         */
-        fun symbols(): List<String> =
-            entries.map { it.symbol }
     }
 
 }

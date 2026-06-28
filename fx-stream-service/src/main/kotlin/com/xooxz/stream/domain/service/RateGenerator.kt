@@ -11,9 +11,9 @@ import java.util.concurrent.ThreadLocalRandom
 class RateGenerator {
 
     /**
-     * 테스트용 환율 더미데이터 생성
-     * @param symbol 통화쌍 코드
-     * @return 생성된 환율 정보
+     * 테스트용 현재 환율 생성
+     * @param symbol 통화 코드
+     * @return 생성된 현재 환율
      */
     fun createDummyRate(symbol: String): RateResponse {
         val randomPrice = ThreadLocalRandom.current()
@@ -21,9 +21,12 @@ class RateGenerator {
 
         return RateResponse(
             symbol = symbol,
-            price = BigDecimal.valueOf(randomPrice).setScale(2, RoundingMode.HALF_UP),
-            createdAt = LocalDateTime.now()
+            price = BigDecimal.valueOf(randomPrice)
+                .setScale(2, RoundingMode.HALF_UP),
+            previousPrice = null,
+            change = BigDecimal.ZERO,
+            changeRate = BigDecimal.ZERO,
+            updatedAt = LocalDateTime.now()
         )
     }
-
 }
