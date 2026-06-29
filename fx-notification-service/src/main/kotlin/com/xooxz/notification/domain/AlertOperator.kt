@@ -1,6 +1,6 @@
 package com.xooxz.notification.domain
 
 enum class AlertOperator {
-    GREATER_THAN_OR_EQUAL,
-    LESS_THAN_OR_EQUAL
+    GTE, //GREATER_THAN_OR_EQUAL 이상
+    LTE  //LESS_THAN_OR_EQUAL 이하
 }

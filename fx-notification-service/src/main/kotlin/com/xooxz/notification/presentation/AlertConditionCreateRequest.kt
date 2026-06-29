@@ -6,7 +6,6 @@ import java.math.BigDecimal
 
 data class AlertConditionCreateRequest (
     val userId: Long,
-    val alertSeq: Long,
     val symbol: String,
     val targetPrice: BigDecimal,
     val operator: AlertOperator,

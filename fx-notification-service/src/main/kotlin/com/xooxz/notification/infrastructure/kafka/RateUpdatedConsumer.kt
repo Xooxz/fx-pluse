@@ -16,5 +16,6 @@ class RateUpdatedConsumer(
     fun consume(event: RateUpdatedEvent) {
         // println("환율 이벤트 수신: symbol=${event.symbol}, price=${event.price}, createdAt=${event.createdAt}")
         alertConditionService.handle(event)
+            .subscribe()
     }
 }

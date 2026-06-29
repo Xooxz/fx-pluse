@@ -13,9 +13,8 @@ data class RateAlertCondition(
     val targetPrice: BigDecimal,
     val operator: AlertOperator,
     val interval: AlertInterval,
-
-    // ONCE 알림 발송 후 비활성화 처리
-    val active: Boolean = true,
+    val useYn: Boolean = true,
+    val createdAt: LocalDateTime = LocalDateTime.now(),
 
     // 마지막 발송 성공 시각
     val lastSentAt: LocalDateTime? = null

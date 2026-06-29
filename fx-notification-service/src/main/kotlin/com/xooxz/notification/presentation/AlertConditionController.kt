@@ -1,29 +1,17 @@
 package com.xooxz.notification.presentation
 
-import com.xooxz.notification.domain.RateAlertCondition
-import com.xooxz.notification.infrastructure.redis.AlertConditionRepository
+import com.xooxz.notification.application.AlertConditionService
 import org.springframework.web.bind.annotation.*
+import reactor.core.publisher.Mono
 
 @RestController
 @RequestMapping(value = ["/alerts"])
 class AlertConditionController (
-    private val alertConditionRepository: AlertConditionRepository
+        private val alertConditionService: AlertConditionService
     ){
 
     @PostMapping
-    fun create(
-        @RequestBody request: AlertConditionCreateRequest
-    ){
-
-        val condition = RateAlertCondition(
-            userId = request.userId,
-            alertSeq = request.alertSeq,
-            symbol = request.symbol,
-            targetPrice = request.targetPrice,
-            operator = request.operator,
-            interval = request.interval
-        )
-
-        alertConditionRepository.save(condition)
+    fun create(@RequestBody request: AlertConditionCreateRequest): Mono<Boolean> {
+        return alertConditionService.create(request)
     }
 }
