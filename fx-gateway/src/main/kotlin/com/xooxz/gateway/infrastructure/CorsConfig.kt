@@ -1,4 +1,4 @@
-package com.xooxz.gateway.config
+package com.xooxz.gateway.infrastructure
 
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration

@@ -13,6 +13,15 @@
         </option>
       </GradleProjectSettings>
       <GradleProjectSettings>
+        <option name="externalProjectPath" value="$PROJECT_DIR$/fx-notification-service" />
+        <option name="gradleJvm" value="ms-21" />
+        <option name="modules">
+          <set>
+            <option value="$PROJECT_DIR$/fx-notification-service" />
+          </set>
+        </option>
+      </GradleProjectSettings>
+      <GradleProjectSettings>
         <option name="externalProjectPath" value="$PROJECT_DIR$/fx-stream-service" />
         <option name="gradleJvm" value="ms-21" />
         <option name="modules">

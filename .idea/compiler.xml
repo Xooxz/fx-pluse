@@ -5,6 +5,9 @@
       <module name="fx-gateway" options="-parameters" />
       <module name="fx-gateway.main" options="-parameters" />
       <module name="fx-gateway.test" options="-parameters" />
+      <module name="fx-notification-service" options="-parameters" />
+      <module name="fx-notification-service.main" options="-parameters" />
+      <module name="fx-notification-service.test" options="-parameters" />
       <module name="fx-stream-service" options="-parameters" />
       <module name="fx-stream-service.main" options="-parameters" />
       <module name="fx-stream-service.test" options="-parameters" />
