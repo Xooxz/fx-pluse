@@ -1,6 +1,6 @@
-package com.xooxz.stream.infrastructure
+package com.xooxz.stream.infrastructure.kafka
 
-import com.xooxz.stream.presentation.RateResponse
+import com.xooxz.stream.presentation.dto.RateResponse
 import org.springframework.kafka.core.KafkaTemplate
 import org.springframework.stereotype.Service
 import reactor.core.publisher.Mono
@@ -19,7 +19,7 @@ class RateEventProducer(
         val event = RateUpdatedEvent(
             symbol = rate.symbol,
             price = rate.price,
-            createdAt = rate.createdAt
+            createdAt = rate.updatedAt
         )
 
         return Mono.fromFuture(
