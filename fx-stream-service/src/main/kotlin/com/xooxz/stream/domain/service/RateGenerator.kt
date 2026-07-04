@@ -12,21 +12,26 @@ class RateGenerator {
 
     /**
      * 테스트용 현재 환율 생성
-     * @param symbol 통화 코드
+     * @param symbol      통화 코드
+     * @param countryName 국가명
      * @return 생성된 현재 환율
      */
-    fun createDummyRate(symbol: String): RateResponse {
+    fun createDummyRate(
+        symbol: String,
+        countryName: String,
+    ): RateResponse {
         val randomPrice = ThreadLocalRandom.current()
             .nextDouble(1370.0, 1400.0)
 
         return RateResponse(
             symbol = symbol,
+            countryName = countryName,
             price = BigDecimal.valueOf(randomPrice)
                 .setScale(2, RoundingMode.HALF_UP),
-            previousPrice = null,
             change = BigDecimal.ZERO,
             changeRate = BigDecimal.ZERO,
             updatedAt = LocalDateTime.now()
         )
     }
+
 }

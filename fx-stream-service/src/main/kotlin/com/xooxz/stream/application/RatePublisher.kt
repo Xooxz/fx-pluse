@@ -1,9 +1,9 @@
 package com.xooxz.stream.application
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.xooxz.stream.domain.model.CurrencyPair
 import com.xooxz.stream.domain.service.RateGenerator
 import com.xooxz.stream.infrastructure.kafka.RateEventProducer
+import com.xooxz.stream.infrastructure.persistence.CurrencyPairRepository
 import com.xooxz.stream.infrastructure.redis.CachedRate
 import com.xooxz.stream.presentation.dto.RateResponse
 import io.github.oshai.kotlinlogging.KotlinLogging
@@ -27,7 +27,8 @@ class RatePublisher(
     private val rateGenerator: RateGenerator,
     private val redisTemplate: ReactiveStringRedisTemplate,
     private val rateEventProducer: RateEventProducer,
-    private val objectMapper: ObjectMapper
+    private val objectMapper: ObjectMapper,
+    private val currencyPairRepository: CurrencyPairRepository,
 ) : ApplicationRunner {
 
     private val log = KotlinLogging.logger {}
@@ -48,10 +49,13 @@ class RatePublisher(
 
         disposable = Flux.interval(Duration.ofSeconds(1))
             .flatMap {
-                Flux.fromIterable(CurrencyPair.entries)
+                currencyPairRepository.findAllByEnabledTrue()
             }
             .flatMap { currency ->
-                val rate = rateGenerator.createDummyRate(currency.symbol)
+                val rate = rateGenerator.createDummyRate(
+                    symbol = currency.symbol,
+                    countryName = currency.countryName,
+                )
 
                 saveLatestRate(rate)
                     .then(rateEventProducer.send(rate))
@@ -97,8 +101,8 @@ class RatePublisher(
             .defaultIfEmpty(
                 CachedRate(
                     symbol = rate.symbol,
+                    countryName = rate.countryName,
                     price = rate.price,
-                    previousPrice = null,
                     change = BigDecimal.ZERO,
                     changeRate = BigDecimal.ZERO,
                     updatedAt = LocalDateTime.now()
@@ -118,8 +122,8 @@ class RatePublisher(
 
                 val cachedRate = CachedRate(
                     symbol = rate.symbol,
+                    countryName = rate.countryName,
                     price = rate.price,
-                    previousPrice = previous.price,
                     change = change.setScale(2, RoundingMode.HALF_UP),
                     changeRate = changeRate,
                     updatedAt = LocalDateTime.now()

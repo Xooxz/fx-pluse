@@ -1,6 +1,6 @@
 package com.xooxz.stream.presentation.controller
 
-import com.xooxz.stream.application.RateStreamService
+import com.xooxz.stream.application.RateService
 import com.xooxz.stream.presentation.dto.RateResponse
 import io.github.oshai.kotlinlogging.KotlinLogging
 import org.springframework.http.MediaType
@@ -12,7 +12,7 @@ import reactor.core.publisher.Mono
 
 @RestController
 class RateStreamController(
-    private val rateStreamService: RateStreamService
+    private val rateService: RateService
 ) {
 
     private val log = KotlinLogging.logger {}
@@ -24,7 +24,7 @@ class RateStreamController(
     @GetMapping("/{symbol}")
     fun getRate(@PathVariable symbol: String): Mono<RateResponse> {
         log.info { "단건 환율 조회" }
-        return rateStreamService.getRate(symbol)
+        return rateService.getRate(symbol)
     }
 
     /**
@@ -37,7 +37,7 @@ class RateStreamController(
     )
     fun streamRates(@PathVariable symbol: String): Flux<RateResponse> {
         log.info { "개별 환율 스트리밍 조회" }
-        return rateStreamService.getStreamRates(symbol)
+        return rateService.getStreamRates(symbol)
     }
 
     /**
@@ -49,7 +49,7 @@ class RateStreamController(
     )
     fun streamRates(): Flux<List<RateResponse>> {
         log.info { "전체 환율 스트리밍 조회" }
-        return rateStreamService.streamRates()
+        return rateService.streamRates()
     }
 
 }
