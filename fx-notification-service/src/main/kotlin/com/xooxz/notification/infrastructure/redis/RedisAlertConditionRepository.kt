@@ -2,7 +2,7 @@ package com.xooxz.notification.infrastructure.redis
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.xooxz.notification.domain.RateAlertCondition
-import org.slf4j.LoggerFactory
+import io.github.oshai.kotlinlogging.KotlinLogging
 import org.springframework.data.redis.core.ReactiveStringRedisTemplate
 import org.springframework.stereotype.Repository
 import reactor.core.publisher.Flux
@@ -16,8 +16,6 @@ class RedisAlertConditionRepository(
 ) : AlertConditionRepository {
 
     companion object {
-        private val log = LoggerFactory.getLogger(RedisAlertConditionRepository::class.java)
-
         private fun key(symbol: String): String =
             "alert:condition:$symbol"
 
@@ -27,6 +25,8 @@ class RedisAlertConditionRepository(
         private fun seqKey(userId: Long): String =
             "alert:seq:$userId"
     }
+
+    private val log = KotlinLogging.logger {}
 
     override fun nextAlertSeq(userId: Long): Mono<Long> {
         return redisTemplate.opsForValue()

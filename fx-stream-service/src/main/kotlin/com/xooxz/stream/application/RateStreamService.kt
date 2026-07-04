@@ -6,7 +6,6 @@ import com.xooxz.stream.domain.exception.RateNotFoundException
 import com.xooxz.stream.domain.exception.UnsupportedCurrencyException
 import com.xooxz.stream.domain.model.CurrencyPair
 import com.xooxz.stream.presentation.dto.RateResponse
-import org.slf4j.LoggerFactory
 import org.springframework.data.redis.core.ReactiveStringRedisTemplate
 import org.springframework.stereotype.Service
 import reactor.core.publisher.Flux
@@ -21,7 +20,6 @@ class RateStreamService(
 ) {
 
     companion object {
-        private val log = LoggerFactory.getLogger(RateStreamService::class.java)
         private val STALE_THRESHOLD = Duration.ofMinutes(1)
     }
 

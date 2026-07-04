@@ -5,28 +5,23 @@ import com.xooxz.notification.domain.RateAlertCondition
 import com.xooxz.notification.infrastructure.kafka.RateUpdatedEvent
 import com.xooxz.notification.infrastructure.redis.AlertConditionRepository
 import com.xooxz.notification.presentation.AlertConditionCreateRequest
-import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import reactor.core.publisher.Mono
-import com.xooxz.notification.domain.AlertInterval
+import io.github.oshai.kotlinlogging.KotlinLogging
 import java.time.LocalDateTime
-
 
 @Service
 class AlertConditionService(
     private val alertConditionRepository: AlertConditionRepository
     ) {
 
-    companion object {
-        private val log = LoggerFactory.getLogger(AlertConditionService::class.java)
-    }
+    private val log = KotlinLogging.logger {}
 
     fun handle(event: RateUpdatedEvent): Mono<Void> {
         return alertConditionRepository.findBySymbol(event.symbol)
 
             // 조회된 알림 조건을 하나씩 검사
             .flatMap { condition ->
-
                 return@flatMap alertConditionRepository
                     .isCooldown(condition.userId, condition.alertSeq)
                     .flatMap { cooldown ->
@@ -66,7 +61,7 @@ class AlertConditionService(
                             // Reactive에서는 Mono를 반환해야 실제 실행 체인에 포함
                             return@flatMap alertConditionRepository.update(updatedCondition)
                                 .flatMap {
-                                    log.info("Cooldown 시작 - {}초", updatedCondition.interval.seconds)
+                                    log.info { "${"Cooldown 시작 - {}초"} ${updatedCondition.interval.seconds}" }
 
                                     alertConditionRepository.startCooldown(
                                         updatedCondition.userId,

@@ -6,7 +6,7 @@ import com.xooxz.stream.domain.service.RateGenerator
 import com.xooxz.stream.infrastructure.kafka.RateEventProducer
 import com.xooxz.stream.infrastructure.redis.CachedRate
 import com.xooxz.stream.presentation.dto.RateResponse
-import org.slf4j.LoggerFactory
+import io.github.oshai.kotlinlogging.KotlinLogging
 import org.springframework.boot.ApplicationArguments
 import org.springframework.boot.ApplicationRunner
 import org.springframework.data.redis.core.ReactiveStringRedisTemplate
@@ -30,10 +30,7 @@ class RatePublisher(
     private val objectMapper: ObjectMapper
 ) : ApplicationRunner {
 
-    companion object {
-        private val log = LoggerFactory.getLogger(RatePublisher::class.java)
-    }
-
+    private val log = KotlinLogging.logger {}
     private var disposable: Disposable? = null
 
     override fun run(args: ApplicationArguments) {
@@ -45,7 +42,7 @@ class RatePublisher(
      */
     fun start() {
         if (isRunning()) {
-            log.info("RatePublisher is already running")
+            log.info { "RatePublisher is already running" }
             return
         }
 
@@ -61,11 +58,11 @@ class RatePublisher(
                     .thenReturn(rate)
             }
             .doOnError { ex ->
-                log.error("RatePublisher error", ex)
+                log.error(ex) { "RatePublisher error" }
             }
             .subscribe()
 
-        log.info("RatePublisher started")
+        log.info { "RatePublisher started" }
     }
 
     /**
@@ -73,7 +70,7 @@ class RatePublisher(
      */
     fun stop() {
         disposable?.dispose()
-        log.info("RatePublisher stopped")
+        log.info { "RatePublisher stopped" }
     }
 
     /**

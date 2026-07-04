@@ -28,6 +28,7 @@ dependencies {
 
     implementation("io.micrometer:micrometer-tracing-bridge-brave")
     implementation("io.zipkin.reporter2:zipkin-reporter-brave")
+    implementation("io.github.oshai:kotlin-logging-jvm:7.0.7")
 
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("io.projectreactor:reactor-test")
