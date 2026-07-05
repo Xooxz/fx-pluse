@@ -3,6 +3,7 @@ package com.xooxz.stream.application
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.xooxz.stream.domain.service.RateGenerator
 import com.xooxz.stream.infrastructure.kafka.RateEventProducer
+import com.xooxz.stream.infrastructure.persistence.CurrencyPairEntity
 import com.xooxz.stream.infrastructure.persistence.CurrencyPairRepository
 import com.xooxz.stream.infrastructure.redis.CachedRate
 import com.xooxz.stream.presentation.dto.RateResponse
@@ -18,6 +19,7 @@ import java.math.BigDecimal
 import java.math.RoundingMode
 import java.time.Duration
 import java.time.LocalDateTime
+import java.util.concurrent.atomic.AtomicReference
 
 /**
  * 실시간 환율 발행 컴포넌트
@@ -28,14 +30,40 @@ class RatePublisher(
     private val redisTemplate: ReactiveStringRedisTemplate,
     private val rateEventProducer: RateEventProducer,
     private val objectMapper: ObjectMapper,
-    private val currencyPairRepository: CurrencyPairRepository,
+    private val currencyPairRepository: CurrencyPairRepository
 ) : ApplicationRunner {
 
     private val log = KotlinLogging.logger {}
     private var disposable: Disposable? = null
 
+    /**
+     * 발행 대상 통화 목록 캐시
+     */
+    private val currenciesRef =
+        AtomicReference<List<CurrencyPairEntity>>(emptyList())
+
+    /**
+     * 애플리케이션 시작 시 통화 목록을 로딩한 뒤 Publisher 실행
+     */
     override fun run(args: ApplicationArguments) {
-        start()
+        reloadCurrencies()
+            .doOnSuccess {
+                start()
+            }
+            .subscribe()
+    }
+
+    /**
+     * DB에서 사용 가능한 통화 목록을 조회하여 메모리에 저장
+     */
+    fun reloadCurrencies(): Mono<Void> {
+        return currencyPairRepository.findAllByEnabledTrue()
+            .collectList()
+            .doOnNext { loadedCurrencies ->
+                currenciesRef.set(loadedCurrencies)
+                log.info { "Currency pairs loaded. count=${loadedCurrencies.size}" }
+            }
+            .then()
     }
 
     /**
@@ -47,14 +75,25 @@ class RatePublisher(
             return
         }
 
-        disposable = Flux.interval(Duration.ofSeconds(1))
-            .flatMap {
-                currencyPairRepository.findAllByEnabledTrue()
+        if (currenciesRef.get().isEmpty()) {
+            log.warn { "RatePublisher cannot start. currency list is empty." }
+            return
+        }
+
+        disposable = Flux.interval(Duration.ZERO, Duration.ofSeconds(1))
+            .flatMapIterable { tick ->
+                currenciesRef.get()
+                    .filter { currency ->
+                        currency.period > 0 &&
+                                tick % currency.period.toLong() == 0L
+                    }
             }
             .flatMap { currency ->
                 val rate = rateGenerator.createDummyRate(
                     symbol = currency.symbol,
                     countryName = currency.countryName,
+                    minRate = currency.minRate,
+                    maxRate = currency.maxRate
                 )
 
                 saveLatestRate(rate)
@@ -79,7 +118,7 @@ class RatePublisher(
 
     /**
      * Publisher의 실행 여부를 반환
-     * @return true[실행 중], false[실행 중X]
+     * @return true[실행 중], false[실행 중 아님]
      */
     fun isRunning(): Boolean {
         return disposable?.isDisposed == false
@@ -110,6 +149,7 @@ class RatePublisher(
             )
             .flatMap { previous ->
                 val change = rate.price.subtract(previous.price)
+
                 val changeRate =
                     if (previous.price.compareTo(BigDecimal.ZERO) == 0) {
                         BigDecimal.ZERO
@@ -133,5 +173,4 @@ class RatePublisher(
                     .set(key, objectMapper.writeValueAsString(cachedRate))
             }
     }
-
 }

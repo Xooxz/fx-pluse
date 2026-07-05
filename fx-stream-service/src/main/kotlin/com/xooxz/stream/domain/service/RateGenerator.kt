@@ -14,14 +14,18 @@ class RateGenerator {
      * 테스트용 현재 환율 생성
      * @param symbol      통화 코드
      * @param countryName 국가명
+     * @param minRate     환율 최소값
+     * @param maxRate     환율 최대값
      * @return 생성된 현재 환율
      */
     fun createDummyRate(
         symbol: String,
         countryName: String,
+        minRate: Double,
+        maxRate: Double
     ): RateResponse {
         val randomPrice = ThreadLocalRandom.current()
-            .nextDouble(1370.0, 1400.0)
+            .nextDouble(minRate, maxRate)
 
         return RateResponse(
             symbol = symbol,

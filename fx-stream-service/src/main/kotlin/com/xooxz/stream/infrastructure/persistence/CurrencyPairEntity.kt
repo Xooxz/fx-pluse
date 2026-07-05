@@ -10,6 +10,9 @@ import java.time.LocalDateTime
  * @param id           식별자
  * @param symbol       통화쌍 코드
  * @param countryName  국가명
+ * @param minRate      환율 최소값
+ * @param maxRate      환율 최대값
+ * @param period       환율 생성 주기
  * @param enabled      사용 여부
  * @param createdAt    생성 일시
  * @param updatedAt    수정 일시
@@ -25,6 +28,15 @@ data class CurrencyPairEntity(
 
     @Column("country_name")
     val countryName: String,
+
+    @Column("min_rate")
+    val minRate: Double,
+
+    @Column("max_rate")
+    val maxRate: Double,
+
+    @Column("period")
+    val period: Int,
 
     @Column("enabled")
     val enabled: Boolean = true,
