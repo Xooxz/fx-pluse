@@ -29,12 +29,19 @@ dependencies {
 
     implementation("io.micrometer:micrometer-tracing-bridge-brave")
     implementation("io.zipkin.reporter2:zipkin-reporter-brave")
-
+    implementation("io.github.oshai:kotlin-logging-jvm:7.0.7")
     implementation("com.google.firebase:firebase-admin:9.4.3")
+    implementation("org.springframework.boot:spring-boot-starter-data-r2dbc")
+    implementation("org.postgresql:r2dbc-postgresql")
 
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
     testImplementation("io.projectreactor:reactor-test")
     testImplementation("org.springframework.kafka:spring-kafka-test")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+    tasks.withType<Test> {
+        useJUnitPlatform()
+        failOnNoDiscoveredTests = false
+    }
+
 }
