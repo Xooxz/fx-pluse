@@ -30,8 +30,7 @@ class RateGenerator {
         return RateResponse(
             symbol = symbol,
             countryName = countryName,
-            price = BigDecimal.valueOf(randomPrice)
-                .setScale(2, RoundingMode.HALF_UP),
+            price = BigDecimal.valueOf(randomPrice).setScale(2, RoundingMode.HALF_UP),
             change = BigDecimal.ZERO,
             changeRate = BigDecimal.ZERO,
             updatedAt = LocalDateTime.now()

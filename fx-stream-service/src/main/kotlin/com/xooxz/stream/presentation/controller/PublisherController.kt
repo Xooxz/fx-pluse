@@ -29,7 +29,7 @@ class PublisherController(
         ratePublisher.start()
 
         return BaseResponse.succeed(
-            message = "RatePublisher started",
+            message = "환율 발행이 시작되었습니다.",
             data = ratePublisher.isRunning()
         )
     }
@@ -44,7 +44,7 @@ class PublisherController(
         ratePublisher.stop()
 
         return BaseResponse.succeed(
-            message = "RatePublisher stopped",
+            message = "환율 발행을 중지했습니다.",
             data = ratePublisher.isRunning()
         )
     }
@@ -58,7 +58,7 @@ class PublisherController(
         log.info { "환율 Publisher 상태 조회" }
 
         return BaseResponse.succeed(
-            message = "RatePublisher status",
+            message = "환율 발행 상태를 조회했습니다.",
             data = ratePublisher.isRunning()
         )
     }
