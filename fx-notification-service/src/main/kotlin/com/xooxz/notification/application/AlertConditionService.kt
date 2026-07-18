@@ -1,5 +1,6 @@
 package com.xooxz.notification.application
 
+import com.xooxz.notification.domain.AlertInterval
 import com.xooxz.notification.domain.AlertOperator
 import com.xooxz.notification.domain.RateAlertCondition
 import com.xooxz.notification.infrastructure.kafka.RateUpdatedEvent
@@ -28,7 +29,8 @@ class AlertConditionService(
      * 2. 발송 가능 여부 확인(Cooldown)
      * 3. 조건 충족 여부 판단
      * 4. 알림 이벤트 생성
-     * 5. 마지막 발송 시간 및 Cooldown 갱신 */
+     * 5. 마지막 발송 시간 및 Cooldown 갱신
+     */
     fun handle(event: RateUpdatedEvent): Mono<Void> {
         return alertConditionRepository.findBySymbol(event.symbol)
 
@@ -66,10 +68,12 @@ class AlertConditionService(
                             )
 
                             val now = LocalDateTime.now()
+                            val isOnce = condition.interval == AlertInterval.ONCE
 
                             // 마지막 발송 시각 갱신
                             val updatedCondition = condition.copy(
                                 lastSentAt = now,
+                                useYn = if (isOnce) false else condition.useYn,
                                 modifiedAt = now,
                                 modifiedBy = "SYSTEM"
                             )
@@ -94,13 +98,29 @@ class AlertConditionService(
                             // 5. 마지막 발송 시간 및 Cooldown 갱신
                             return@flatMap alertConditionRepository.update(updatedCondition)
                                 .flatMap {
-                                    log.info("Cooldown 시작 - {}초", updatedCondition.interval.seconds)
+                                    if (isOnce) {
+                                        log.info(
+                                            "일회성 알림 종료 - alertConditionId : {}, mbrKey : {}, alertSeq : {}",
+                                            updatedCondition.alertConditionId,
+                                            updatedCondition.mbrKey,
+                                            updatedCondition.alertSeq,
+                                        )
 
-                                    cooldownRepository.startCooldown(
-                                        updatedCondition.mbrKey,
-                                        updatedCondition.alertSeq,
-                                        updatedCondition.interval.seconds
-                                    )
+                                        Mono.just(true)
+                                    } else {
+                                        log.info("Cooldown 시작 - alertConditionId={}, mbrKey={}, alertSeq={}, interval={}초",
+                                            updatedCondition.alertConditionId,
+                                            updatedCondition.mbrKey,
+                                            updatedCondition.alertSeq,
+                                            updatedCondition.interval.seconds
+                                        )
+
+                                        cooldownRepository.startCooldown(
+                                            updatedCondition.mbrKey,
+                                            updatedCondition.alertSeq,
+                                            updatedCondition.interval.seconds
+                                        )
+                                    }
                                 }
 
                         } else {

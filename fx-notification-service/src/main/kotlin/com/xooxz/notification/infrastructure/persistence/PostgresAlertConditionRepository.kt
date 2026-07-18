@@ -18,13 +18,22 @@ class PostgresAlertConditionRepository(
 
     /**
      * 회원별 다음 알림 순번 조회
+     *
+     * @param  mbrKey 사용자고유키
+     * @return 다음 알림 순번
      */
     override fun nextAlertSeq(mbrKey: String): Mono<Long> {
-        return r2dbcRepository.findTopByMbrKeyOrderByAlertSeqDesc(mbrKey)
-            .map { it.alertSeq + 1 }
-            .defaultIfEmpty(1)
+        return r2dbcRepository.findMaxAlertSeq(mbrKey)
+            .map { it + 1 }
     }
 
+
+    /**
+     * 알림 조건 저장
+     *
+     * @param  condition 저장할 알림 조건
+     * @return 저장 성공 여부
+     */
     override fun save(condition: RateAlertCondition): Mono<Boolean> {
 
         log.info(
@@ -42,11 +51,24 @@ class PostgresAlertConditionRepository(
             .map { true }
     }
 
+    /**
+     * 유효한 통화 코드 알림 조회
+     *
+     * @param  symbol 통화코드
+     * @return 사용 중인 알림 조건 목록
+     */
     override fun findBySymbol(symbol: String): Flux<RateAlertCondition> {
         return r2dbcRepository.findBySymbolAndUseYn(symbol, true)
             .map { it.toDomain() }
     }
 
+
+    /**
+     * 알림 조건 업데이트
+     *
+     * @param  condition 갱신할 알림 조건
+     * @return 업데이트 성공 여부
+     */
     override fun update(condition: RateAlertCondition): Mono<Boolean> {
 
         log.info(
