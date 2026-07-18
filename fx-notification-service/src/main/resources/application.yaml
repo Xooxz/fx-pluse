@@ -12,6 +12,18 @@ spring:
       password: fx_steam12!@
       database: 0
 
+  r2dbc:
+    url: r2dbc:postgresql://localhost:15432/fx_stream
+    username: fx_user
+    password: fx_stream12!@
+
+    pool:
+      enabled: true
+      initial-size: 1
+      max-size: 10
+      max-idle-time: 30m
+      validation-query: SELECT 1
+
   kafka:
     bootstrap-servers: localhost:9092
     consumer:

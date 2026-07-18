@@ -5,7 +5,8 @@ import com.xooxz.notification.domain.AlertOperator
 import java.math.BigDecimal
 
 data class AlertConditionCreateRequest (
-    val userId: Long,
+    val mbrKey: String,
+    val mbrId: String,
     val symbol: String,
     val targetPrice: BigDecimal,
     val operator: AlertOperator,
