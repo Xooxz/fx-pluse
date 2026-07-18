@@ -21,10 +21,6 @@ class RateService(
     private val currencyPairRepository: CurrencyPairRepository
 ) {
 
-    companion object {
-        private val STALE_THRESHOLD = Duration.ofMinutes(1)
-    }
-
     /**
      * 지원 통화 여부를 검증한 뒤 Redis에 저장된 최신 환율 정보를 조회
      * @param symbol 통화 코드
@@ -102,4 +98,9 @@ class RateService(
                 )
             }
     }
+
+    companion object {
+        private val STALE_THRESHOLD = Duration.ofMinutes(1)
+    }
+
 }

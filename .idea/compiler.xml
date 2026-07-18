@@ -2,6 +2,9 @@
 <project version="4">
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="fx-auth-service" options="-parameters" />
+      <module name="fx-auth-service.main" options="-parameters" />
+      <module name="fx-auth-service.test" options="-parameters" />
       <module name="fx-gateway" options="-parameters" />
       <module name="fx-gateway.main" options="-parameters" />
       <module name="fx-gateway.test" options="-parameters" />

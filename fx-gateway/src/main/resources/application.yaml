@@ -22,25 +22,25 @@ spring:
               filters:
                 - StripPrefix=2
 
-#            - id: fx-rate-history-service
-#              uri: http://localhost:8082
-#              predicates:
-#                - Path=/api/rates/history/**
-#              filters:
-#                - StripPrefix=2
-#
-#            - id: fx-rate-command-service
-#              uri: http://localhost:8083
-#              predicates:
-#                - Path=/api/rates/command/**
-#              filters:
-#                - StripPrefix=2
+            - id: fx-notification-service
+              uri: http://localhost:8082
+              predicates:
+                - Path=/api/notification/**
+              filters:
+                - StripPrefix=2
+
+            - id: fx-auth-service
+              uri: http://localhost:8083
+              predicates:
+                - Path=/api/auth/**
+              filters:
+                - StripPrefix=2
 
 management:
   endpoints:
     web:
       exposure:
-        include: health,info,gateway,prometheus
+        include: health,info
 
   tracing:
     sampling:
@@ -49,3 +49,6 @@ management:
   zipkin:
     tracing:
       endpoint: http://localhost:9411/api/v2/spans
+
+jwt:
+  secret: this-is-my-super-secret-key-with-more-than-32-characters-12345678
