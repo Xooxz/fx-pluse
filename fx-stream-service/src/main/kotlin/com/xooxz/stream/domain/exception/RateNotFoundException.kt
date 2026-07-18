@@ -7,5 +7,5 @@ package com.xooxz.stream.domain.exception
 class RateNotFoundException(
     symbol: String
 ) : RuntimeException(
-    "Rate not found: $symbol"
+    "해당 통화의 환율 정보를 찾을 수 없습니다. ($symbol)"
 )

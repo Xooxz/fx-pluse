@@ -9,11 +9,11 @@ interface CurrencyPairRepository : ReactiveCrudRepository<CurrencyPairEntity, Lo
     /**
      * 지원하는 통화 여부를 조회한다.
      */
-    fun existsBySymbolAndEnabledTrue(symbol: String): Mono<Boolean>
+    fun existsBySymbolAndUseYnTrue(symbol: String): Mono<Boolean>
 
     /**
      * 사용 가능한 전체 통화 목록을 조회한다.
      */
-    fun findAllByEnabledTrue(): Flux<CurrencyPairEntity>
+    fun findAllByUseYnTrue(): Flux<CurrencyPairEntity>
 
 }
