@@ -16,6 +16,8 @@ spring:
     url: r2dbc:postgresql://localhost:15432/fx_stream
     username: fx_user
     password: fx_stream12!@
+    properties:
+      schema: noti
 
     pool:
       enabled: true
@@ -34,6 +36,15 @@ spring:
         spring.json.trusted.packages: "*"
         spring.json.value.default.type: "com.xooxz.notification.infrastructure.kafka.RateUpdatedEvent"
         spring.json.use.type.headers: false
+
+  flyway:
+    enabled: true
+    schemas: noti
+    default-schema: noti
+    url: jdbc:postgresql://localhost:15432/fx_stream
+    user: fx_user
+    password: fx_stream12!@
+    locations: classpath:db/migration
 
 management:
   endpoints:

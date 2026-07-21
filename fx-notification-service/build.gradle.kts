@@ -32,7 +32,14 @@ dependencies {
     implementation("io.github.oshai:kotlin-logging-jvm:7.0.7")
     implementation("com.google.firebase:firebase-admin:9.4.3")
     implementation("org.springframework.boot:spring-boot-starter-data-r2dbc")
+
     implementation("org.postgresql:r2dbc-postgresql")
+    implementation("io.r2dbc:r2dbc-pool")
+
+    implementation("org.flywaydb:flyway-core")
+    implementation("org.flywaydb:flyway-database-postgresql")
+
+    runtimeOnly("org.postgresql:postgresql")
 
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
