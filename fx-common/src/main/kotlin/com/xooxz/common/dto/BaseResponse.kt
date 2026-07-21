@@ -1,4 +1,4 @@
-package com.xooxz.stream.presentation.dto
+package com.xooxz.common.dto
 
 import com.fasterxml.jackson.annotation.JsonInclude
 import java.io.Serializable

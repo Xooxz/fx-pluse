@@ -1,7 +1,8 @@
 package com.xooxz.gateway.infrastructure.jwt
 
-import com.xooxz.gateway.infrastructure.exception.ExpiredTokenException
-import com.xooxz.gateway.infrastructure.exception.InvalidTokenException
+import com.xooxz.common.exception.ExpiredTokenException
+import com.xooxz.common.exception.InvalidTokenException
+import com.xooxz.common.jwt.JwtTokenProvider
 import com.xooxz.gateway.infrastructure.exception.JwtAuthenticationException
 import com.xooxz.gateway.infrastructure.security.JwtAuthenticationEntryPoint
 import org.slf4j.LoggerFactory

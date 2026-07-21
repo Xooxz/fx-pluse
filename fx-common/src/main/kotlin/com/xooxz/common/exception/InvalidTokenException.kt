@@ -1,4 +1,4 @@
-package com.xooxz.gateway.infrastructure.exception
+package com.xooxz.common.exception
 
 /**
  * JWT가 위조되었거나 형식이 올바르지 않은 경우 발생하는 예외

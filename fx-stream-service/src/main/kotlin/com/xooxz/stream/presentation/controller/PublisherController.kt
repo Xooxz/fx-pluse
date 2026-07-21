@@ -1,7 +1,7 @@
 package com.xooxz.stream.presentation.controller
 
+import com.xooxz.common.dto.BaseResponse
 import com.xooxz.stream.application.RatePublisher
-import com.xooxz.stream.presentation.dto.BaseResponse
 import io.github.oshai.kotlinlogging.KotlinLogging
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping

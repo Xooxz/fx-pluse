@@ -1,8 +1,8 @@
 package com.xooxz.stream.presentation.exception
 
+import com.xooxz.common.dto.BaseResponse
 import com.xooxz.stream.domain.exception.RateNotFoundException
 import com.xooxz.stream.domain.exception.UnsupportedCurrencyException
-import com.xooxz.stream.presentation.dto.BaseResponse
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.ExceptionHandler

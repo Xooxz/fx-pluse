@@ -1,4 +1,4 @@
-package com.xooxz.gateway.infrastructure.exception
+package com.xooxz.common.exception
 
 /**
  * Access Token의 유효기간이 만료된 경우 발생하는 예외

@@ -1,22 +1,18 @@
-package com.xooxz.gateway.infrastructure.jwt
+package com.xooxz.common.jwt
 
-import com.xooxz.gateway.infrastructure.exception.ExpiredTokenException
-import com.xooxz.gateway.infrastructure.exception.InvalidTokenException
+import com.xooxz.common.exception.ExpiredTokenException
+import com.xooxz.common.exception.InvalidTokenException
 import io.jsonwebtoken.Claims
 import io.jsonwebtoken.ExpiredJwtException
 import io.jsonwebtoken.JwtException
 import io.jsonwebtoken.Jwts
 import io.jsonwebtoken.security.Keys
-import org.springframework.beans.factory.annotation.Value
-import org.springframework.stereotype.Component
 import javax.crypto.SecretKey
 
 /**
  * JWT를 검증하고 Claims 정보를 제공하는 컴포넌트
  */
-@Component
 class JwtTokenProvider(
-    @Value("\${jwt.secret}")
     secret: String
 ) {
 
@@ -66,4 +62,5 @@ class JwtTokenProvider(
         return claims[ROLE_CLAIM] as? String
             ?: throw InvalidTokenException("권한 정보가 존재하지 않습니다.")
     }
+
 }
