@@ -6,7 +6,7 @@ CREATE TABLE currency_pair
     min_rate                 DOUBLE PRECISION NOT NULL,
     max_rate                 DOUBLE PRECISION NOT NULL,
     period                   INTEGER NOT NULL,
-    enabled      BOOLEAN     NOT NULL DEFAULT TRUE,
+    use_yn       BOOLEAN     NOT NULL DEFAULT TRUE,
     created_at   TIMESTAMP   NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at   TIMESTAMP   NOT NULL DEFAULT CURRENT_TIMESTAMP
 );

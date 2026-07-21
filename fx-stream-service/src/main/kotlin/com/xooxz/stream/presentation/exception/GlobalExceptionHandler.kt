@@ -11,6 +11,10 @@ import org.springframework.web.bind.annotation.RestControllerAdvice
 @RestControllerAdvice(basePackages = ["com.xooxz.stream.presentation.controller"])
 class GlobalExceptionHandler {
 
+    companion object {
+        private const val DEFAULT_ERROR_MESSAGE = "오류가 발생했습니다."
+    }
+
     @ExceptionHandler(UnsupportedCurrencyException::class)
     fun handleUnsupportedCurrencyException(
         ex: UnsupportedCurrencyException
@@ -19,7 +23,7 @@ class GlobalExceptionHandler {
         return ResponseEntity.badRequest()
             .body(
                 BaseResponse.Companion.failed(
-                    message = ex.message ?: "Unsupported currency",
+                    message = ex.message ?: DEFAULT_ERROR_MESSAGE,
                     code = "INVALID_CURRENCY"
                 )
             )
@@ -33,7 +37,7 @@ class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.NOT_FOUND)
             .body(
                 BaseResponse.failed(
-                    message = ex.message ?: "Rate not found",
+                    message = ex.message ?: DEFAULT_ERROR_MESSAGE,
                     code = "RATE_NOT_FOUND"
                 )
             )

@@ -57,7 +57,7 @@ class RatePublisher(
      * DB에서 사용 가능한 통화 목록을 조회하여 메모리에 저장
      */
     fun reloadCurrencies(): Mono<Void> {
-        return currencyPairRepository.findAllByEnabledTrue()
+        return currencyPairRepository.findAllByUseYnTrue()
             .collectList()
             .doOnNext { loadedCurrencies ->
                 currenciesRef.set(loadedCurrencies)
@@ -84,8 +84,8 @@ class RatePublisher(
             .flatMapIterable { tick ->
                 currenciesRef.get()
                     .filter { currency ->
-                        currency.period > 0 &&
-                                tick % currency.period.toLong() == 0L
+                        val currentTick = tick + 1
+                        currentTick % currency.period.toLong() == 0L
                     }
             }
             .flatMap { currency ->
@@ -118,7 +118,7 @@ class RatePublisher(
 
     /**
      * Publisher의 실행 여부를 반환
-     * @return true[실행 중], false[실행 중 아님]
+     * @return 실행 여부
      */
     fun isRunning(): Boolean {
         return disposable?.isDisposed == false

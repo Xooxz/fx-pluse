@@ -7,5 +7,5 @@ package com.xooxz.stream.domain.exception
 class UnsupportedCurrencyException(
     symbol: String
 ) : RuntimeException(
-    "Unsupported currency pair: $symbol"
+    "지원하지 않는 통화입니다. ($symbol)"
 )

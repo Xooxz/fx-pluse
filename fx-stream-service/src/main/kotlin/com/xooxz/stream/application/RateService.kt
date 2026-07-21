@@ -31,7 +31,7 @@ class RateService(
      * @return 최신 환율 정보
      */
     fun getRate(symbol: String): Mono<RateResponse> {
-        return currencyPairRepository.existsBySymbolAndEnabledTrue(symbol)
+        return currencyPairRepository.existsBySymbolAndUseYnTrue(symbol)
             .flatMap { exists ->
                 if (!exists) {
                     return@flatMap Mono.error(
@@ -62,7 +62,7 @@ class RateService(
     fun streamRates(): Flux<List<RateResponse>> {
         return Flux.interval(Duration.ZERO, Duration.ofSeconds(1))
             .flatMap {
-                currencyPairRepository.findAllByEnabledTrue().flatMap { currency ->
+                currencyPairRepository.findAllByUseYnTrue().flatMap { currency ->
                     getRateFromRedis(currency.symbol).onErrorResume {
                         Mono.empty()
                     }

@@ -13,7 +13,7 @@ import java.time.LocalDateTime
  * @param minRate      환율 최소값
  * @param maxRate      환율 최대값
  * @param period       환율 생성 주기
- * @param enabled      사용 여부
+ * @param useYn        사용 여부
  * @param createdAt    생성 일시
  * @param updatedAt    수정 일시
  */
@@ -38,8 +38,8 @@ data class CurrencyPairEntity(
     @Column("period")
     val period: Int,
 
-    @Column("enabled")
-    val enabled: Boolean = true,
+    @Column("use_yn")
+    val useYn: Boolean = true,
 
     @Column("created_at")
     val createdAt: LocalDateTime? = null,
