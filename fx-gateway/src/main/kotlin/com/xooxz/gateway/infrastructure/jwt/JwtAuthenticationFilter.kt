@@ -27,8 +27,8 @@ class JwtAuthenticationFilter(
 
     companion object {
         private const val BEARER_PREFIX = "Bearer "
-        const val MEMBER_KEY_HEADER = "X-Member-Key"
-        const val MEMBER_ROLE_HEADER = "X-Member-Role"
+        private const val MEMBER_KEY_HEADER = "X-Member-Key"
+        private const val MEMBER_ROLE_HEADER = "X-Member-Role"
     }
 
     private val log = LoggerFactory.getLogger(JwtAuthenticationFilter::class.java)

@@ -1,3 +1,11 @@
 spring:
   application:
     name: fx-auth-service
+
+jwt:
+  secret: this-is-my-super-secret-key-with-more-than-32-characters-12345678
+  access-token-expiration: 30m
+
+auth:
+  token:
+    refresh-token-expiration: 7d
